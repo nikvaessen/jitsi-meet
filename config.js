@@ -344,7 +344,6 @@ var config = {
 
     // List of undocumented settings used in jitsi-meet
     /**
-     alwaysVisibleToolbar
      autoRecord
      autoRecordToken
      debug
