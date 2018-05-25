@@ -170,6 +170,9 @@ var config = {
     // Whether to enable recording or not.
     // enableRecording: false,
 
+    // Whether to enable transcribing or not
+    // enableTranscribing: false,
+
     // Type for recording: one of jibri or jirecon.
     // recordingType: 'jibri',
 
