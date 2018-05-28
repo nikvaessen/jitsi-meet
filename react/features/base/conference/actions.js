@@ -1,5 +1,4 @@
 // @flow
-
 import UIEvents from '../../../../service/UI/UIEvents';
 
 import {
@@ -51,6 +50,7 @@ import {
     _addLocalTracksToConference,
     sendLocalParticipant
 } from './functions';
+import { endpointMessageReceived } from '../../transcription';
 
 import type { Dispatch } from 'redux';
 
@@ -78,6 +78,11 @@ function _addConferenceListeners(conference, dispatch) {
     conference.on(
         JitsiConferenceEvents.CONFERENCE_LEFT,
         (...args) => dispatch(conferenceLeft(conference, ...args)));
+
+    // Dispatches into features/transcription follow:
+    conference.on(
+        JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
+        (...args) => dispatch(endpointMessageReceived(conference, ...args)));
 
     conference.on(
         JitsiConferenceEvents.KICKED,
@@ -329,7 +334,7 @@ export function createConference() {
 
         conference[JITSI_CONFERENCE_URL_KEY] = locationURL;
         dispatch(_conferenceWillJoin(conference));
-
+        console.log('Calling _addConferenceListeners');
         _addConferenceListeners(conference, dispatch);
 
         sendLocalParticipant(state, conference);
