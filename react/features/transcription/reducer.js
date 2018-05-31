@@ -4,14 +4,13 @@ import {
     UPDATE_TRANSCRIPT_MESSAGE,
     REMOVE_TRANSCRIPT_MESSAGE
 } from './actionTypes';
+import { getUpdatedTranscriptionParagraphs } from './functions';
 import { ReducerRegistry } from '../base/redux';
-import React from 'react';
 
 /**
  * Default State for 'features/transcription' feature
  */
 const defaultState = {
-    // participantIDs: [],
     transcriptMessages: {},
     transcriptionSubtitles: []
 };
@@ -41,7 +40,7 @@ ReducerRegistry.register('features/transcription', (
 });
 
 /**
- * Reduces a specific Redux action ADD_TRANSCRIPT_MESSAGE of the feature
+ * Reduces a specific Redux action ENDPOINT_MESSAGE_RECEIVED of the feature
  * transcription.
  *
  * @param {Object} state - The Redux state of the feature transcription.
@@ -50,52 +49,31 @@ ReducerRegistry.register('features/transcription', (
  */
 function _endpointMessageReceived(state) {
 
-    const paragraphs = [];
-
-    Object.keys(state.transcriptMessages).forEach((id, index) => {
-        console.log(id, index);
-        const transcriptMessage = state.transcriptMessages[id];
-        let text;
-
-        if (transcriptMessage) {
-            text = `${transcriptMessage.participantName}: `;
-
-            if (transcriptMessage.final) {
-                text += transcriptMessage.final;
-            } else {
-                const stable = transcriptMessage.stable
-                    ? transcriptMessage.stable : '';
-                const unstable = transcriptMessage.unstable
-                    ? transcriptMessage.unstable : '';
-
-                text += stable + unstable;
-            }
-        }
-
-        paragraphs.push(<p key = { id }> { text } </p>);
-    });
-
     return {
         ...state,
-        transcriptionSubtitles: paragraphs
+        transcriptionSubtitles:
+            getUpdatedTranscriptionParagraphs(state.transcriptMessages)
     };
 }
 
 /**
- * Reduces a specific Redux action ENDPOINT_MESSAGE_RECEIVED of the feature
+ * Reduces a specific Redux action ADD_TRANSCRIPT_MESSAGE of the feature
  * transcription.
  *
  * @param {Object} state - The Redux state of the feature transcription.
- * @param {Action} action -The Redux action ENDPOINT_MESSAGE_RECEIVED to reduce.
+ * @param {Action} action -The Redux action ADD_TRANSCRIPT_MESSAGE to reduce.
  * @returns {Object} The new state of the feature transcription after the
  * reduction of the specified action.
  */
-function _addTranscriptMessage(state, { transcriptMessageID, participantName }) {
+function _addTranscriptMessage(state,
+        { transcriptMessageID, participantName }) {
 
     return {
         ...state,
-        transcriptMessages: Object.assign({}, state.transcriptMessages,
-            { [transcriptMessageID]: { participantName } })
+        transcriptMessages: {
+            ...state.transcriptMessages,
+            [transcriptMessageID]: { participantName }
+        }
     };
 }
 
@@ -113,8 +91,10 @@ function _updateTranscriptMessage(state,
 
     return {
         ...state,
-        transcriptMessages: Object.assign({}, state.transcriptMessages,
-        { [transcriptMessageID]: newTranscriptMessage })
+        transcriptMessages: {
+            ...state.transcriptMessages,
+            [transcriptMessageID]: newTranscriptMessage
+        }
     };
 }
 
@@ -128,10 +108,15 @@ function _updateTranscriptMessage(state,
  * reduction of the specified action.
  */
 function _removeTranscriptMessage(state, { transcriptMessageID }) {
+    const newTranscriptMessages = {
+        ...state.transcriptMessages,
+        [transcriptMessageID]: undefined
+    };
 
     return {
         ...state,
-        transcriptMessages: Object.assign({}, state.transcriptMessages,
-            { [transcriptMessageID]: undefined })
+        transcriptMessages: newTranscriptMessages,
+        transcriptionSubtitles:
+            getUpdatedTranscriptionParagraphs(newTranscriptMessages)
     };
 }

@@ -6,6 +6,8 @@ import {
     updateTranscriptMessage
 } from './actions';
 
+const logger = require('jitsi-meet-logger').getLogger(__filename);
+
 /**
 * Time after which the rendered subtitles will be removed.
 */
@@ -29,8 +31,8 @@ MiddlewareRegistry.register(store => next => action => {
 });
 
 /**
- * Notifies the feature base/conference that the action
- * {@code CONNECTION_ESTABLISHED} is being dispatched within a specific redux
+ * Notifies the feature transcription that the action
+ * {@code ENDPOINT_MESSAGE_RECEIVED} is being dispatched within a specific redux
  * store.
  *
  * @param {Store} store - The redux store in which the specified {@code action}
@@ -56,8 +58,6 @@ function _endpointMessageReceived({ dispatch, getState }, next, action) {
         // TODO: To be replaced by if(p['topic']==='transcription-result')\
         // after jigasi changes
         if (p.transcript) {
-            console.log('Payload Contains Transcript');
-
             // Extract the useful data from the payload of the JSON message
             const text = p.transcript[0].text;
             const stability = p.stability;
@@ -113,14 +113,13 @@ function _endpointMessageReceived({ dispatch, getState }, next, action) {
                 const newTranscriptMessage
                     = transcriptMessages[transcriptMessageID];
 
-                console.log(transcriptMessages, newTranscriptMessage);
                 newTranscriptMessage.unstable = text;
                 dispatch(updateTranscriptMessage(transcriptMessageID,
                     newTranscriptMessage));
             }
         }
     } catch (error) {
-        console.log('Error Occurred while updating transcriptions', error);
+        logger.error('Error occurred while updating transcriptions\n', error);
     }
     next(action);
 }

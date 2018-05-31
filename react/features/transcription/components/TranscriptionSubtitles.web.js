@@ -1,37 +1,12 @@
-
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-// declare var JitsiMeetJS: Object;
-// const ConferenceEvents = JitsiMeetJS.events.conference;
-
 /**
- * The type of the React {@code Component} props of
- * {@link TranscriptionSubtitles}.
+ * The React {@code Component} class of {@link TranscriptionSubtitles}
+ * for style changes from css/_transcriptionSubtitles
  */
-// type Props = {
-//
-//     /**
-//      * The conference which we can use to add an EventListener to
-//      */
-//     _conference: Object
-//
-// };
-
-/**
- * The type of the React {@code Component} state of
- * {@link TranscriptionSubtitles}.
- */
-// type State = {
-//
-//     /**
-//      * Whether or not the {@link TranscriptionSubtitles} should be invisible.
-//      */
-//     hidden: boolean,
-//
-// };
+const className = 'transcription-subtitles';
 
 /**
  * React {@code Component} which can display speech-to-text results from
@@ -65,12 +40,18 @@ import { connect } from 'react-redux';
  *
  */
 class TranscriptionSubtitles extends React.Component<Props, State> {
-
+    /**
+     * The type of the React {@code Component} props of
+     * {@link TranscriptionSubtitles}.
+     */
     static propTypes = {
-        // _conference: PropTypes.object,
         transcriptionSubtitles: PropTypes.arrayOf(PropTypes.element)
     };
 
+    /**
+     * The type of the React {@code Component} state of
+     * {@link TranscriptionSubtitles}.
+     */
     state = {
         hidden: false
     };
@@ -85,7 +66,6 @@ class TranscriptionSubtitles extends React.Component<Props, State> {
         if (this.state.hidden) {
             return null;
         }
-        const className = 'transcription-subtitles';
 
         return (
             <div className = { className }>
@@ -106,12 +86,11 @@ class TranscriptionSubtitles extends React.Component<Props, State> {
  *     transcriptionSubtitles: string
  * }}
  */
-function mapStateToProps(state) {
+function _mapStateToProps(state) {
     return {
-        // _conference: state['features/base/conference'].conference,
         transcriptionSubtitles:
         state['features/transcription'].transcriptionSubtitles
     };
 }
 
-export default connect(mapStateToProps)(TranscriptionSubtitles);
+export default connect(_mapStateToProps)(TranscriptionSubtitles);
