@@ -114,11 +114,6 @@ var config = {
     // Enable / disable simulcast support.
     // disableSimulcast: false,
 
-    // Enable / disable layer suspension.  If enabled, endpoints whose HD
-    // layers are not in use will be suspended (no longer sent) until they
-    // are requested again.
-    // enableLayerSuspension: false,
-
     // Suspend sending video if bandwidth estimation is too low. This may cause
     // problems with audio playback. Disabled until these are fixed.
     disableSuspendVideo: true,
@@ -172,11 +167,14 @@ var config = {
 
     // Recording
 
-    // Whether to enable file recording or not.
-    // fileRecordingsEnabled: false,
+    // Whether to enable recording or not.
+    // enableRecording: false,
 
-    // Whether to enable live streaming or not.
-    // liveStreamingEnabled: false,
+    // Whether to enable transcribing or not
+    // enableTranscribing: false,
+
+    // Type for recording: one of jibri or jirecon.
+    // recordingType: 'jibri',
 
     // Misc
 
@@ -346,6 +344,7 @@ var config = {
 
     // List of undocumented settings used in jitsi-meet
     /**
+     alwaysVisibleToolbar
      autoRecord
      autoRecordToken
      debug
