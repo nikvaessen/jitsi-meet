@@ -14,7 +14,9 @@ import {
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
-    PIN_PARTICIPANT
+    PIN_PARTICIPANT,
+    HIDDEN_PARTICIPANT_JOINED,
+    HIDDEN_PARTICIPANT_LEFT
 } from './actionTypes';
 import { MAX_DISPLAY_NAME_LENGTH } from './constants';
 import { getLocalParticipant } from './functions';
@@ -273,6 +275,21 @@ export function participantJoined(participant) {
                 participant
             });
         }
+    };
+}
+
+export function hiddenParticipantJoined(id, displayName) {
+    return {
+        type: HIDDEN_PARTICIPANT_JOINED,
+        id,
+        displayName
+    };
+}
+
+export function hiddenParticipantLeft(id) {
+    return {
+        type: HIDDEN_PARTICIPANT_LEFT,
+        id
     };
 }
 

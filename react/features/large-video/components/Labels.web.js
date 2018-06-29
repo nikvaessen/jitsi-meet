@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 
 import { RecordingLabel } from '../../recording';
 import { VideoQualityLabel } from '../../video-quality';
+import { TranscribingLabel } from '../../transcribing';
 
 /**
  * The type of the React {@code Component} props of {@link Labels}.
@@ -95,6 +96,7 @@ class Labels extends Component<Props, State> {
         return (
             <div className = { className } >
                 { _recordingSessions.map(this._renderRecordingLabel) }
+                <TranscribingLabel />
                 <VideoQualityLabel />
             </div>
         );
