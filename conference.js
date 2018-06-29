@@ -83,7 +83,9 @@ import {
     participantLeft,
     participantPresenceChanged,
     participantRoleChanged,
-    participantUpdated
+    participantUpdated,
+    hiddenParticipantLeft,
+    hiddenParticipantJoined
 } from './react/features/base/participants';
 import { updateSettings } from './react/features/base/settings';
 import {
@@ -1657,10 +1659,13 @@ export default {
         room.on(JitsiConferenceEvents.PARTCIPANT_FEATURES_CHANGED,
             user => APP.UI.onUserFeaturesChanged(user));
         room.on(JitsiConferenceEvents.USER_JOINED, (id, user) => {
+            const displayName = user.getDisplayName();
+
             if (user.isHidden()) {
+                APP.store.dispatch(hiddenParticipantJoined(id, displayName));
+
                 return;
             }
-            const displayName = user.getDisplayName();
 
             APP.store.dispatch(participantJoined({
                 botType: user.getBotType(),
@@ -1685,8 +1690,11 @@ export default {
 
         room.on(JitsiConferenceEvents.USER_LEFT, (id, user) => {
             if (user.isHidden()) {
+                APP.store.dispatch(hiddenParticipantLeft(id));
+
                 return;
             }
+
             APP.store.dispatch(participantLeft(id, room));
             logger.log('USER %s LEFT', id, user);
             APP.API.notifyUserLeft(id);
