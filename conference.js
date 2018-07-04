@@ -75,6 +75,8 @@ import {
     getAvatarURLByParticipantId,
     getLocalParticipant,
     getParticipantById,
+    hiddenParticipantJoined,
+    hiddenParticipantLeft,
     localParticipantConnectionStatusChanged,
     localParticipantRoleChanged,
     MAX_DISPLAY_NAME_LENGTH,
@@ -83,9 +85,7 @@ import {
     participantLeft,
     participantPresenceChanged,
     participantRoleChanged,
-    participantUpdated,
-    hiddenParticipantLeft,
-    hiddenParticipantJoined
+    participantUpdated
 } from './react/features/base/participants';
 import { updateSettings } from './react/features/base/settings';
 import {
