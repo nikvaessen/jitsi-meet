@@ -56,6 +56,7 @@ import OverflowMenuItem from './OverflowMenuItem';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
 import ToolbarButton from './ToolbarButton';
 import VideoMuteButton from '../VideoMuteButton';
+import { ClosedCaptionButton } from '../../../subtitles';
 
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.
@@ -354,6 +355,9 @@ class Toolbox extends Component<Props> {
                         visible = { this._shouldShowButton('camera') } />
                 </div>
                 <div className = 'button-group-right'>
+                    {
+                        <ClosedCaptionButton />
+                    }
                     { this._shouldShowButton('invite')
                         && !_hideInviteButton
                         && <ToolbarButton
