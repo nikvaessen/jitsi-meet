@@ -1,3 +1,2 @@
-export { default as StartTranscribingDialog } from './StartTranscribingDialog';
-export { default as StopTranscribingDialog } from './StopTranscribingDialog';
+export { default as ClosedCaptionButton } from './ClosedCaptionButton';
 export { default as TranscribingLabel } from './TranscribingLabel';
