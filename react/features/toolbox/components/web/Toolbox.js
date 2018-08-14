@@ -64,7 +64,7 @@ import ToolbarButton from './ToolbarButton';
 import VideoMuteButton from '../VideoMuteButton';
 import {
     ClosedCaptionButton
-} from '../../../transcribing';
+} from '../../../subtitles';
 
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.

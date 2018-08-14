@@ -2,7 +2,10 @@
 
 import { MiddlewareRegistry } from '../base/redux';
 
-import { ENDPOINT_MESSAGE_RECEIVED } from './actionTypes';
+import {
+    ENDPOINT_MESSAGE_RECEIVED,
+    TOGGLE_REQUESTING_SUBTITLES
+} from './actionTypes';
 import {
     removeTranscriptMessage,
     updateTranscriptMessage
@@ -29,6 +32,19 @@ const JSON_TYPE_TRANSLATION_RESULT = 'translation-result';
 const P_NAME_TRANSLATION_LANGUAGE = 'translation_language';
 
 /**
+ * The local participant property which is used to store the language preference
+ * for transcription for a participant.
+ */
+const P_NAME_TRANSCRIPTION_LANGUAGE = 'transcription_language';
+
+/**
+ * Currently we assume that the local participant will be talking english.
+ */
+const DEFAULT_TRANSCRIPTION_LANGUAGE = 'en-us';
+
+const UNDEFINED_TRANSCRIPTION_LANGUAGE = '';
+
+/**
 * Time after which the rendered subtitles will be removed.
 */
 const REMOVE_AFTER_MS = 3000;
@@ -41,14 +57,40 @@ const REMOVE_AFTER_MS = 3000;
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
-
     switch (action.type) {
     case ENDPOINT_MESSAGE_RECEIVED:
         return _endpointMessageReceived(store, next, action);
+    case TOGGLE_REQUESTING_SUBTITLES:
+        _requestingSubtitlesToggled(store);
+        break;
     }
 
     return next(action);
 });
+
+/**
+ * Sets the "source" transcription language in the presence of the local
+ * participant. This will cause Jicofo and Jigasi to decide whether
+ * the transcriber needs to be in the room.
+ *
+ * @param {Store} store - The redux store.
+ * @private
+ * @returns {void}
+ */
+function _requestingSubtitlesToggled({ getState }) {
+    const { _requestingSubtitles } = getState()['features/subtitles'];
+    const { conference } = getState()['features/base/conference'];
+
+    if (_requestingSubtitles) {
+        console.log(`set local property ${P_NAME_TRANSCRIPTION_LANGUAGE} to '${UNDEFINED_TRANSCRIPTION_LANGUAGE}'`);
+        conference.setLocalParticipantProperty(
+            P_NAME_TRANSCRIPTION_LANGUAGE, UNDEFINED_TRANSCRIPTION_LANGUAGE);
+    } else {
+        console.log(`set local property ${P_NAME_TRANSCRIPTION_LANGUAGE} to ${DEFAULT_TRANSCRIPTION_LANGUAGE}`);
+        conference.setLocalParticipantProperty(
+            P_NAME_TRANSCRIPTION_LANGUAGE, DEFAULT_TRANSCRIPTION_LANGUAGE);
+    }
+}
 
 /**
  * Notifies the feature transcription that the action
@@ -68,8 +110,16 @@ function _endpointMessageReceived({ dispatch, getState }, next, action) {
     if (!(action.json
         && (action.json.type === JSON_TYPE_TRANSCRIPTION_RESULT
             || action.json.type === JSON_TYPE_TRANSLATION_RESULT))) {
+        try {
+            console.log(`skipping ENDPOINT MESSAGE with type${action.json.type}`);
+        } catch (e) {
+            console.log('skipping ENDPOINT_MESSAGE without json');
+        }
+
         return next(action);
     }
+
+    console.log('handling ENDPOINT_MESSAGE', action);
 
     const json = action.json;
     const translationLanguage
@@ -95,6 +145,7 @@ function _endpointMessageReceived({ dispatch, getState }, next, action) {
 
             setClearerOnTranscriptMessage(dispatch,
                 transcriptMessageID, newTranscriptMessage);
+            console.log('dispatching transcript', newTranscriptMessage);
             dispatch(updateTranscriptMessage(transcriptMessageID,
                 newTranscriptMessage));
 
@@ -109,7 +160,7 @@ function _endpointMessageReceived({ dispatch, getState }, next, action) {
             // message ID or adds a new transcript message if it does not
             // exist in the map.
             const newTranscriptMessage
-                = { ...getState()['features/subtitles'].transcriptMessages
+                = { ...getState()['features/subtitles']._transcriptMessages
                     .get(transcriptMessageID) || { participantName } };
 
             setClearerOnTranscriptMessage(dispatch,
@@ -120,6 +171,8 @@ function _endpointMessageReceived({ dispatch, getState }, next, action) {
             if (!isInterim) {
 
                 newTranscriptMessage.final = text;
+                console.log('dispatching transcript', newTranscriptMessage);
+
                 dispatch(updateTranscriptMessage(transcriptMessageID,
                     newTranscriptMessage));
             } else if (stability > 0.85) {
@@ -130,6 +183,8 @@ function _endpointMessageReceived({ dispatch, getState }, next, action) {
 
                 newTranscriptMessage.stable = text;
                 newTranscriptMessage.unstable = undefined;
+                console.log('dispatching transcript', newTranscriptMessage);
+
                 dispatch(updateTranscriptMessage(transcriptMessageID,
                     newTranscriptMessage));
             } else {
