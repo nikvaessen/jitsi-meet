@@ -26,8 +26,6 @@ ReducerRegistry.register('features/subtitles', (
         return _updateTranscriptMessage(state, action);
 
     case TOGGLE_REQUESTING_SUBTITLES:
-        console.log(`setting _requestingSubtitles to the negative: ${!state._requestingSubtitles}`);
-
         return {
             ...state,
             _requestingSubtitles: !state._requestingSubtitles
@@ -73,11 +71,6 @@ function _updateTranscriptMessage(state,
 
     // Updates the new message for the given key in the Map.
     newTranscriptMessages.set(transcriptMessageID, newTranscriptMessage);
-
-    console.log('updated state in reducer:', {
-        ...state,
-        transcriptMessages: newTranscriptMessages
-    });
 
     return {
         ...state,

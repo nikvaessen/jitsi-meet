@@ -33,7 +33,6 @@ class TranscriptionSubtitles extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        console.log('this is the props', this.props);
         if (!this.props._requestingSubtitles
              || !this.props._transcriptMessages) {
             return null;
