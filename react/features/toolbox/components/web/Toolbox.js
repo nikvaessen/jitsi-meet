@@ -14,8 +14,7 @@ import { translate } from '../../../base/i18n';
 import {
     getLocalParticipant,
     getParticipants,
-    participantUpdated,
-    isLocalParticipantModerator
+    participantUpdated
 } from '../../../base/participants';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { ChatCounter } from '../../../chat';
@@ -1040,7 +1039,7 @@ function _mapStateToProps(state) {
         callStatsID,
         iAmRecorder
     } = state['features/base/config'];
-    let {
+    const {
         transcribingEnabled
     } = state['features/base/config'];
     const sharedVideoStatus = state['features/shared-video'].status;
@@ -1059,9 +1058,6 @@ function _mapStateToProps(state) {
     const dialOutEnabled = isDialOutEnabled(state);
 
     let desktopSharingDisabledTooltipKey;
-
-    transcribingEnabled
-        = isLocalParticipantModerator(state) && transcribingEnabled;
 
     if (state['features/base/config'].enableFeaturesBasedOnToken) {
         // we enable desktop sharing if any participant already have this
